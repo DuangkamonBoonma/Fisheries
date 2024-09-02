@@ -2,7 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import re
 
-dof_url = "https://www4.fisheries.go.th/dof/main"
+list_url = "https://www4.fisheries.go.th/dof/main"
 
 BASE_HEADERS = {
     "user-agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
@@ -11,7 +11,7 @@ BASE_HEADERS = {
     "accept-encoding":"gzip, deflate, br, zstd",
 }
 
-response = requests.get(dof_url, headers=BASE_HEADERS)
+response = requests.get(list_url, headers=BASE_HEADERS)
 
 soup = BeautifulSoup(response.text, "html.parser")
 
