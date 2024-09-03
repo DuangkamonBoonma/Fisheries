@@ -22,7 +22,9 @@ title_list = []
 for element in content:
     title = element.get('title')
     
-    if title:
+    if title and re.search(r'\d+', title):
         title_list.append(title)
 
-print(title_list)
+with open("output.txt", "w", newline='', encoding='utf-8') as f: 
+    for title in title_list:
+        f.write(title + "\t")
