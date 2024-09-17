@@ -1,0 +1,53 @@
+import requests
+from bs4 import BeautifulSoup
+import re
+import pandas as pd
+
+# Fetch the webpage content
+home = requests.get("https://www.wishproperty.com/asset/?type=sale&province_id=1&fbclid=IwY2xjawFU4XNleHRuA2FlbQIxMAABHYLijrxqpI567oLq7iVxBNyzFP1SP2VJyiQEB7mSiE3DCH_YwuId3rLPoA_aem_qt2beqCjKadYfxE_mPhlow")
+soup = BeautifulSoup(home.content, "html.parser")
+
+# Extract price information from 'col-md-12'
+content_prices = soup.find_all(class_="col-md-12")
+prices = []
+
+# Use regex to extract prices in 'บาท'
+price_matches = re.findall(r'([\d,]+)\s*บาท', str(content_prices))
+
+# Check if price matches exist
+if price_matches:
+    for price_str in price_matches:
+        # Remove commas and convert to float
+        price = float(price_str.replace(',', ''))
+        prices.append(price)
+else:
+    print(f"No price found in: {content_prices}")
+
+# Extract other information from 'fnt14 fw_b'
+content_titles = soup.find_all(class_="fnt14 fw_b")
+titles = [element.get_text(strip=True) for element in content_titles]
+
+# Extract other information from 'col-xs-12 col-sm-12 col-md-12 fnt12 fn_grey text-left'
+content_details = soup.find_all(class_="col-xs-12 col-sm-12 col-md-12 fnt12 fn_grey text-left")
+details = [element.get_text(strip=True) for element in content_details]
+
+# Ensure that all lists have the same length
+min_length = min(len(prices), len(titles), len(details))
+prices = prices[:min_length]
+titles = titles[:min_length]
+details = details[:min_length]
+
+# Create a DataFrame combining the three sets of data
+data = {
+    'Price (บาท)': prices,
+    'Title': titles,
+    'Details': details
+}
+
+df = pd.DataFrame(data)
+
+df.to_csv('output.csv', index=False)
+print("Data saved to output.csv")
+
+##### model
+
