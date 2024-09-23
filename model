@@ -8,17 +8,58 @@ import matplotlib.pyplot as plt
 
 # โหลดข้อมูล (ปรับเส้นทางไฟล์ตามที่อยู่ของข้อมูล)
 data = pd.read_csv('output.csv')
-
-# แปลงคอลัมน์ 'Title' เป็นข้อมูลเชิงตัวเลข
-label_encoder = LabelEncoder()
-data['Title'] = label_encoder.fit_transform(data['Title'])
-
-# ตรวจสอบข้อมูลที่แปลงแล้ว
 print(data.head())
 
+import pandas as pd
+from sklearn.preprocessing import LabelEncoder
+
+# ข้อมูลต้นฉบับ
+data = [
+    "ดอนเมือง, กรุงเทพมหานคร",
+    "พระโขนง, กรุงเทพมหานคร",
+    "ดอนเมือง, กรุงเทพมหานคร",
+    "ทุ่งครุ, กรุงเทพมหานคร",
+    "สวนหลวง, กรุงเทพมหานคร",
+    "ลาดกระบัง, กรุงเทพมหานคร",
+    "จตุจักร, กรุงเทพมหานคร",
+    "ภาษีเจริญ, กรุงเทพมหานคร",
+    "สวนหลวง, กรุงเทพมหานคร"
+]
+
+# แยกเขตและจังหวัด
+districts = []
+provinces = []
+
+for entry in data:
+    district, province = entry.split(", ")
+    districts.append(district)
+    provinces.append(province)
+
+# สร้าง DataFrame
+df = pd.DataFrame({
+    'District': districts,
+    'Province': provinces
+})
+
+# แปลงคอลัมน์ 'Province' เป็นข้อมูลเชิงตัวเลข
+label_encoder = LabelEncoder()
+df['Province_encoder'] = label_encoder.fit_transform(df['Province'])
+
+# แสดงผล
+print(df)
+
+# ข้อมูลราคาที่ให้มา
+prices = [2800000, 2200000, 5500000, 3250000, 4200000, 900000, 1800000, 1390000, 6950000]
+
+# ตรวจสอบให้แน่ใจว่าจำนวนราคาตรงกับจำนวนเขต
+if len(prices) == len(df):
+    df['Price (บาท)'] = prices
+else:
+    print("จำนวนราคาต้องตรงกับจำนวนเขต!")
+
 # กำหนดตัวแปรอิสระและตัวแปรเป้าหมาย
-X = data[['Title']]  # ตัวแปรอิสระ (ใช้ 'Title')
-y = data['Price (บาท)']  # ตัวแปรเป้าหมาย (ใช้ 'Price (บาท)')
+X = df[['Price (บาท)']]  # ตัวแปรอิสระ 
+y = df['Province_encoder']  # ตัวแปรเป้าหมาย 
 
 # แยกข้อมูลเป็นชุดการฝึกและชุดการทดสอบ
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
@@ -40,8 +81,9 @@ print(f'R-squared: {r2}')
 # แสดงผลลัพธ์กราฟ
 plt.scatter(X_test, y_test, color='blue', label='Actual data')
 plt.plot(X_test, y_pred, color='red', linewidth=2, label='Regression line')
-plt.xlabel('Title')
-plt.ylabel('Price (บาท)')
+plt.xlabel('Price (บาท)')
+plt.ylabel('Province_encoder')
+plt.title('Price vs Province Encoder')
 plt.legend()
 plt.show()
 
