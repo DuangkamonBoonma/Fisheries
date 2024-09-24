@@ -86,12 +86,5 @@ ax.set_xlabel('Price (บาท)')
 ax.set_ylabel('Details Importance')
 st.pyplot(fig)
 
-# Box Plot
-st.subheader("Box Plot of Price")
-fig, ax = plt.subplots()
-sns.boxplot(x=df['Price (บาท)'], ax=ax, color='orange')
-ax.set_title('Box Plot of Price')
-st.pyplot(fig)
-
 # Additional Information
 st.markdown("This app predicts condo prices based on user input.")
